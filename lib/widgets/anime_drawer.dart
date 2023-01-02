@@ -52,7 +52,7 @@ class AnimeDrawer extends StatelessWidget {
                               topLeft: Radius.circular(10),
                               topRight: Radius.circular(10))),
                       child: Text(
-                        'TakoPlay',
+                        'AnimePlex',
                         style: TakoTheme.darkTextTheme.headline4,
                       ),
                     ),

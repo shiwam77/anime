@@ -1,35 +1,87 @@
+import 'dart:async';
+import 'dart:isolate';
+
 import 'package:anime/utils/routes.dart';
+import 'package:anime/utils/utils.dart';
 import 'package:facebook_audience_network/facebook_audience_network.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_facebook_keyhash/flutter_facebook_keyhash.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../bindings/managers_binding.dart';
 import '../services/request_service.dart';
 import '../theme/tako_theme.dart';
 import '../utils/anime_route.dart';
-
-Future<void> main() async {
-  _configureApp();
-  _setUpLogging();
-  runApp(const MyApp());
+void main()  {
+  mainDelegate();
 }
 
-void _configureApp() {
+void mainDelegate() async{
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  await Firebase.initializeApp();
   FacebookAudienceNetwork.init(
     testingId: "b741b125-5a37-46b8-aef8-f27170837ce9",
     iOSAdvertiserTrackingEnabled: true,
   );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: [SystemUiOverlay.bottom, SystemUiOverlay.top]);
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  /// register global error handler
+  FlutterError.onError = (FlutterErrorDetails details) async {
+    if (kDebugMode) {
+      // In development mode simply print to console.
+      FlutterError.dumpErrorToConsole(details);
+    } else {
+      // FirebaseCrashlytics.instance.recordFlutterError;
+      Zone.current.handleUncaughtError(details.exception, details.stack as StackTrace);
+    }
+  };
+
+  /// errors that happen outside of the Flutter context, install an error listener on the current Isolate
+  Isolate.current.addErrorListener(RawReceivePort((pair) async {
+    final List<dynamic> errorAndStacktrace = pair;
+    await FirebaseCrashlytics.instance.recordError(
+      errorAndStacktrace.first,
+      errorAndStacktrace.last,
+    );
+  }).sendPort);
+  bool isSignedUser = false;
+
+  getUUID().then((value) {
+    if(value == null){
+      isSignedUser = false;
+    }else{
+      isSignedUser = true;
+    }
+  });
+
+  runZonedGuarded<Future<void>>(() async {
+
+    runApp( MyApp(isSignIn: isSignedUser,));
+  }, (error, stackTrace) {
+
+    FirebaseCrashlytics.instance.recordError(error, stackTrace);
+
+  });
+
+  _setUpLogging();
+}
+
+
+Future<String?> getUUID() async {
+  return readPrefsString("uuid");
 }
 
 void _setUpLogging() {
@@ -41,7 +93,9 @@ void _setUpLogging() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final bool? isSignIn;
+  const MyApp({Key? key, this.isSignIn}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,16 +106,68 @@ class MyApp extends StatelessWidget {
           dispose: (_, RequestService service) => service.client.dispose(),
         ),
       ],
-      child: 
-        GetMaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'TakoPlay',
-          theme: TakoTheme.dark(),
-          initialRoute:Routes.mainScreen ,
-          initialBinding: ManagerBinding(),
-          getPages: AnimeRoute.pages,
-        ));
+      child: !isSignIn! ? StreamBuilder<User? >(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.active) {
+              User? user = snapshot.data;
+              if (user == null) {
+                _signInAnonymously().then((value) {
+                  setPrefsString("uuid",value?.user?.uid as String);
+                  return GetMaterialApp(
+                    debugShowCheckedModeBanner: false,
+                    title: 'TakoPlay',
+                    theme: TakoTheme.dark(),
+                    initialRoute:Routes.mainScreen ,
+                    initialBinding: ManagerBinding(),
+                    getPages: AnimeRoute.pages,
+                  );
+                });
+                return const MaterialApp(
+                  home: Scaffold(
+                    body: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                );
+              }
+              return GetMaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'TakoPlay',
+                theme: TakoTheme.dark(),
+                initialRoute:Routes.mainScreen ,
+                initialBinding: ManagerBinding(),
+                getPages: AnimeRoute.pages,
+              );
+            }else{
+              return const MaterialApp(
+                home: Scaffold(
+                  body: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              );
+            }
+          }
+      ) : GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'TakoPlay',
+        theme: TakoTheme.dark(),
+        initialRoute:Routes.mainScreen ,
+        initialBinding: ManagerBinding(),
+        getPages: AnimeRoute.pages,
+      )
+    );
+
       
+  }
+
+  Future<UserCredential?> _signInAnonymously() async {
+    try {
+      return await FirebaseAuth.instance.signInAnonymously();
+    } catch (e) {
+     return null; // TODO: show dialog with error
+    }
   }
 }
 
