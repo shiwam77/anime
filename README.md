@@ -1,6 +1,17 @@
 # AnimePlex
 ## Download App
 
-- #### Android : [Download AnimePlex.apk](https://github.com/kaungsatthe1n/Tako-Play/releases/download/v1.5.1/TakoPlay-v1.5.1.apk)
+- #### Android : [Download AnimePlex.apk](https://github.com/shiwam77/anime/releases/download/release--apk/app.apk)
 
 
+### Release
+```bash
+flutter build appbundle --release
+flutter build ios --release
+```
+
+
+```bash
+flutter build apk --debug
+flutter build ios --debug
+```
