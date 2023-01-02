@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import '../helpers/network_manager.dart';
 import '../models/anime.dart';
@@ -38,31 +40,86 @@ class _HomeScreenState extends State<HomeScreen>
     ]);
     animationController = AnimationController(
         duration: Duration(milliseconds: takoAnimationDuration), vsync: this);
-    checkForUpdate();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      versionCheck(context);
+    });
   }
 
-  Future<void> checkForUpdate() async {
+  versionCheck(context) async {
+
+    final PackageInfo info = await PackageInfo.fromPlatform();
+    String getVersion = "${info.version.trim().replaceAll(".", "")}${info.buildNumber.trim().replaceAll(".", "")}";
+    double currentVersion = double.parse(getVersion);
+    final FirebaseRemoteConfig remoteConfig =  FirebaseRemoteConfig.instance;
+
     try {
-      final response =
-          await RequestService.create().requestGitHubUpdate(latestRelease);
-      final json = jsonDecode(response.body);
-      final github = Github.fromJson(json);
-      if (version.compareTo(github.version.toString().trim()) == 0) {
-        isSameVersion = true;
-        // ignore: avoid_print
-        print('same version');
-      } else {
-        isSameVersion = false;
-        updateLink = github.downloadLink.toString();
-        await Get.dialog(UpdateAlertDialog(
-          downloadLink: github.downloadLink.toString(),
-        ));
+      // Using default duration to force fetching from remote server.
+      await remoteConfig.setConfigSettings(RemoteConfigSettings(
+        fetchTimeout: const Duration(seconds: 10),
+        minimumFetchInterval: Duration.zero,
+      ));
+      await remoteConfig.fetchAndActivate();
+
+      String getUpdatedVersion = remoteConfig.getString('force_update_current_version');
+
+      double newVersion = double.parse(getUpdatedVersion
+          .trim()
+          .replaceAll(".", "").replaceAll("+", ""));
+
+      if (newVersion > currentVersion) {
+        showVersionDialog(context);
       }
-    } catch (e) {
-      // ignore: avoid_print
-      print(e.toString());
+
+    } on PlatformException catch (exception) {
+      // Fetch throttled.
+      print(exception);
+    } catch (exception) {
+      print('Unable to fetch remote config. Cached or default values will be '
+          'used');
     }
   }
+
+
+  showVersionDialog(context) async {
+
+    await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        String title = "New Update Available";
+        String message =
+            "There is a newer version of app available please update it now.";
+        String btnLabel = "Update Now";
+        String btnLabelCancel = "Later";
+        return WillPopScope(
+          onWillPop: () async {
+            return false;
+          },
+          child: AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                child: Text(btnLabel),
+                onPressed: () {
+
+                },
+              ),
+              TextButton(
+                  child: Text(btnLabelCancel),
+                  onPressed: () {
+
+                    Navigator.pop(context);
+                  }
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
 
   @override
   void dispose() {

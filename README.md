@@ -1,16 +1,18 @@
-# anime
+# AnimePlex
+## Download App
 
-A new Flutter project.
+- #### Android : [Download AnimePlex.apk](https://github.com/kaungsatthe1n/Tako-Play/releases/download/v1.5.1/TakoPlay-v1.5.1.apk)
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## Build Setup
 
-A few resources to get you started if this is your first Flutter project:
+```bash
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+# install dependencies
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+$ flutter pub get
+```
+
+## Found This Project Useful ?
+
+You can leave a star :star: at the top-right corner of this repository.

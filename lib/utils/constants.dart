@@ -7,8 +7,7 @@ const String version = 'v1.5.1';
 String updateLink = '';
 bool isSameVersion = true;
 const license = 'MIT License';
-const String latestRelease =
-    'https://api.github.com/repos/kaungsatthe1n/Tako-Play/releases/latest';
+
 
 const String baseUrl = 'https://gogoanime.wiki/';
 const String search = '/search.html?keyword=';
@@ -18,7 +17,7 @@ final resolutionRegExp = RegExp(r'[0-9]+(P)');
 // final hostRegExp = RegExp(r"(Server )[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+[,]");
 
 const String mailing =
-    'mailto:shiwamkarn77@gmail.com?subject=[TakoPlay: (Ver: $version)]';
+    'mailto:shiwamkarn77@gmail.com?subject=[AnimePlex: (Ver: $version)]';
 const userAgent =
     'Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36';
 const origin = 'https://goload.one';
