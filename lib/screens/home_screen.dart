@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../helpers/network_manager.dart';
 import '../models/anime.dart';
 import '../models/github.dart';
@@ -40,9 +42,10 @@ class _HomeScreenState extends State<HomeScreen>
     ]);
     animationController = AnimationController(
         duration: Duration(milliseconds: takoAnimationDuration), vsync: this);
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      versionCheck(context);
-    });
+
+  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    versionCheck(context);
+  });
   }
 
   versionCheck(context) async {
@@ -61,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen>
       await remoteConfig.fetchAndActivate();
 
       String getUpdatedVersion = remoteConfig.getString('force_update_current_version');
+      print(getUpdatedVersion);
 
       double newVersion = double.parse(getUpdatedVersion
           .trim()
@@ -74,8 +78,7 @@ class _HomeScreenState extends State<HomeScreen>
       // Fetch throttled.
       print(exception);
     } catch (exception) {
-      print('Unable to fetch remote config. Cached or default values will be '
-          'used');
+      print('Unable to fetch remote config. Cached or default values will be used');
     }
   }
 
@@ -102,15 +105,8 @@ class _HomeScreenState extends State<HomeScreen>
               TextButton(
                 child: Text(btnLabel),
                 onPressed: () {
-
+                  launchUrl(Uri.parse("https://github.com/shiwam77/anime/releases"),mode: LaunchMode.externalApplication);
                 },
-              ),
-              TextButton(
-                  child: Text(btnLabelCancel),
-                  onPressed: () {
-
-                    Navigator.pop(context);
-                  }
               ),
             ],
           ),
@@ -270,3 +266,6 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
+
+

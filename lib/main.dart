@@ -9,13 +9,12 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_facebook_keyhash/flutter_facebook_keyhash.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import '../bindings/managers_binding.dart';
 import '../services/request_service.dart';
 import '../theme/tako_theme.dart';
@@ -27,6 +26,10 @@ void main()  {
 void mainDelegate() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FlutterDownloader.initialize(
+      debug: true, // optional: set to false to disable printing logs to console (default: true)
+      ignoreSsl: true // option: set to false to disable working with http links (default: false)
+  );
   FacebookAudienceNetwork.init(
     testingId: "b741b125-5a37-46b8-aef8-f27170837ce9",
     iOSAdvertiserTrackingEnabled: true,
