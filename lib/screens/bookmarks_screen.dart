@@ -45,7 +45,8 @@ class BookMarksScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     onTap: () {
                       Get.toNamed(Routes.videoListScreen, arguments: {
-                        'anime': bookmarkMaanger.bookMarks[index]
+                        'anime': bookmarkMaanger.bookMarks[index],
+                        'episode': 9999999,
                       });
                     },
                     child: Row(

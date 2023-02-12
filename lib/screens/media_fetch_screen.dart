@@ -11,7 +11,6 @@ import '../services/anime_service.dart';
 import '../theme/tako_theme.dart';
 import '../utils/constants.dart';
 import '../utils/routes.dart';
-import '../utils/tako_helper.dart';
 import '../widgets/play_web_view.dart';
 
 class MediaFetchScreen extends StatefulWidget {
@@ -203,6 +202,8 @@ class _MediaFetchScreenState extends State<MediaFetchScreen> {
                     child: MaterialButton(
                       onPressed: hasError.value
                           ? () {
+                              print(' anime url =  https:' + mediaUrl);
+
                               Get.offNamed(Routes.webViewScreen, arguments: {
                                 'mediaUrl': 'https:' + mediaUrl,
                               });

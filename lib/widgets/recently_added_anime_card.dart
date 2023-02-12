@@ -29,6 +29,7 @@ class RecentlyAddedAnimeCard extends StatelessWidget {
           currentEp: anime.currentEp.toString(),
           imageUrl: anime.imageUrl.toString(),
           epUrl: anime.animeUrl.toString(),
+          animeUrl: anime.animeUrl.toString(),
         );
         // Add to Recent Anime List
         recentWatchManager.addAnimeToRecent(recentAnime);

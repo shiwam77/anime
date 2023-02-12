@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../models/anime.dart';
 import '../theme/tako_theme.dart';
 import '../utils/routes.dart';
@@ -18,7 +19,10 @@ class SearchedResultAnimeCard extends StatelessWidget {
       onTap: () {
         Get.toNamed(
           Routes.videoListScreen,
-          arguments: {'anime': anime},
+          arguments: {
+            'anime': anime,
+            'episode': 9999999,
+          },
         );
       },
       child: Hero(

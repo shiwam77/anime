@@ -18,7 +18,7 @@ class RecentWatchAnimeDatabase {
   final String epUrlCol = 'epUrl';
   final String currentEpCol = 'currentEp';
   final String imageUrlCol = 'imageUrl';
-  // final String animeUrlCol = 'animeUrl';
+  final String animeUrlCol = 'animeUrl';
 
   final String type = 'TEXT NOT NULL';
 
@@ -38,7 +38,7 @@ class RecentWatchAnimeDatabase {
   Future _createDatabase(Database db, version) async {
     await db.execute('''
     CREATE TABLE $tableName (
-      $idCol $type, $nameCol $type, $epUrlCol $type, $currentEpCol $type, $imageUrlCol $type)
+      $idCol $type, $nameCol $type, $epUrlCol $type, $currentEpCol $type, $imageUrlCol $type, $animeUrlCol $type)
     ''');
   }
 

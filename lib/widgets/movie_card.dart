@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import '../helpers/cache_manager.dart';
 import '../models/anime.dart';
 import '../theme/tako_theme.dart';
-import '../utils/constants.dart';
 import '../utils/routes.dart';
 
 class MovieCard extends StatelessWidget {
@@ -18,6 +17,7 @@ class MovieCard extends StatelessWidget {
       onTap: () {
         Get.toNamed(Routes.videoListScreen, arguments: {
           'anime': anime,
+          'episode': 9999999,
         });
       },
       child: Container(
@@ -45,8 +45,7 @@ class MovieCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     child: Text(
                       anime.name.toString(),
                       softWrap: true,
@@ -57,8 +56,7 @@ class MovieCard extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                    padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                     child: Text(
                       anime.releasedDate.toString(),
                       softWrap: true,

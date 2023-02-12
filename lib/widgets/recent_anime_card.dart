@@ -1,3 +1,4 @@
+import 'package:anime/models/recent_anime.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +13,7 @@ class RecentAnimeCard extends StatelessWidget {
     required this.epUrl,
     required this.name,
     required this.imageUrl,
+    required this.anime,
     // required this.animeUrl,
     required this.id,
   }) : super(key: key);
@@ -20,6 +22,7 @@ class RecentAnimeCard extends StatelessWidget {
   final String currentEp;
   final String imageUrl;
   final String epUrl;
+  final RecentAnime anime;
   // final String animeUrl;
 
   @override
@@ -34,9 +37,13 @@ class RecentAnimeCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(6),
           onLongPress: () {},
           onTap: () {
-            Get.toNamed(Routes.mediaFetchScreen, arguments: {
-              'animeUrl': epUrl,
-            });
+            Get.toNamed(
+              Routes.videoListScreen,
+              arguments: {
+                'anime': anime,
+                'episode': int.parse(anime.currentEp.split('').last)
+              },
+            );
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

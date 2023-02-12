@@ -40,6 +40,7 @@ class RecentListScreen extends StatelessWidget {
                 epUrl: recentWatchManager.animeList[index].epUrl,
                 name: recentWatchManager.animeList[index].name,
                 imageUrl: recentWatchManager.animeList[index].imageUrl,
+                anime: recentWatchManager.animeList[index],
                 // animeUrl: recentWatchManager.animeList[index].animeUrl,
               ),
             );

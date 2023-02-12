@@ -60,6 +60,8 @@ dependencies:
   firebase_remote_config: ^3.0.9
   package_info: ^2.0.2
   flutter_downloader: ^1.9.1
+  admob_flutter: ^3.0.0
+  flutter_inappwebview: ^5.7.2+3
 
 
 dev_dependencies:

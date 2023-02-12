@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../helpers/cache_manager.dart';
 import '../models/anime.dart';
 import '../theme/tako_theme.dart';
@@ -12,7 +13,6 @@ class PopularAnimeCard extends StatelessWidget {
     required this.anime,
   }) : super(key: key);
 
-
   final Anime anime;
 
   @override
@@ -23,6 +23,7 @@ class PopularAnimeCard extends StatelessWidget {
         onTap: () {
           Get.toNamed(Routes.videoListScreen, arguments: {
             'anime': anime,
+            'episode': 9999999,
           });
         },
         child: AspectRatio(
